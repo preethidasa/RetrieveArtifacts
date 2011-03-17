@@ -1,0 +1,13 @@
+.idea
+tmp/
+precompiled/
+out/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+eclipse/
+artifacts/
+buildoutput/

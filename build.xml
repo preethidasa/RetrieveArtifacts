@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="RetrieveArtifacts" default="compile.src" basedir=".">
+    <property name="base.dir" value="${basedir}"/>
+    <property name="lib.dir" value="${base.dir}/lib"/>
+    <property name="app.name" value="retrieve-artifacts"/>
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="src.home" value="${basedir}/src/com/thoughtworks"/>
+    <property name="src.resources" value="${basedir}/src/resources"/>
+    <!--<property name="test.home" value="${basedir}/test/java"/>-->
+    <!--<property name="test.resources" value="${basedir}/test/resources"/>-->
+    <property name="artifacts.base" value="${basedir}/artifacts"/>
+    <property name="artifacts.home" value="${artifacts.base}/${app.name}"/>
+    <property name="build.output" value="${basedir}/buildoutput"/>
+    <property name="build.output.war" value="${basedir}/buildoutput/war"/>
+    <property name="build.output.classes" value="${basedir}/buildoutput/classes"/>
+    <property name="build.output.testclasses" value="${basedir}/buildoutput/testclasses"/>
+
+    <property name="src.lib" value="${basedir}/lib"/>
+
+    <fileset id="runtime.libs" dir="${lib.dir}" includes="**/*.jar"/>
+
+    <path id="compile.classpath">
+        <fileset refid="runtime.libs"/>
+    </path>
+
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${build.output.classes}"/>
+        <pathelement location="${build.output.testclasses}"/>
+    </path>
+
+
+    <target name="clean">
+        <delete dir="${build.output}"/>
+        <delete dir="${artifacts.home}"/>
+        <mkdir dir="${build.output.classes}"/>
+        <mkdir dir="${build.output.testclasses}"/>
+    </target>
+
+    <target name="compile" depends="clean, compile.src"/>
+    <macrodef name="java-compile">
+        <attribute name="srcdir"/>
+        <attribute name="destdir"/>
+        <attribute name="classpathrefid"/>
+        <sequential>
+            <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="true" optimize="true" includeantruntime="false">
+                <classpath>
+                    <path refid="@{classpathrefid}"/>
+                </classpath>
+            </javac>
+        </sequential>
+    </macrodef>
+
+    <target name="compile.src">
+        <java-compile srcdir="${src.home}" destdir="${build.output.classes}"
+                      classpathrefid="compile.classpath"/>
+        <copy todir="${build.output.classes}" overwrite="true">
+            <fileset dir="${src.resources}" includes="**/*.xml, **/*.properties"/>
+            <fileset dir="${src.home}" includes="**/*.properties"/>
+        </copy>
+    </target>
+
+    <!--<target name="compile.test">-->
+    <!--<java-compile srcdir="${test.home}" destdir="${build.output.testclasses}"-->
+    <!--classpathrefid="test.classpath"/>-->
+    <!--<copy todir="${test.resources}" overwrite="true">-->
+    <!--<fileset dir="${src.dir}/webapp/WEB-INF/" includes="*.xml"/>-->
+    <!--</copy>-->
+    <!---->
+    <!--<copy todir="${build.output.testclasses}" overwrite="true">-->
+    <!--<fileset dir="${test.resources}" includes="**/*.xls,**/*.xml,**/*.dat"/>-->
+    <!--</copy>-->
+    <!--</target>-->
+
+    <!--<target name="unit.tests" depends="compile">-->
+    <!--<run-tests outdir="${build.output}/JunitReport/unit" testdir="${test.home}/unittest"-->
+    <!--classpathrefid="test.classpath"/>-->
+    <!--</target>-->
+
+    <!--<target name="integration.tests" depends="compile">-->
+    <!--<run-tests outdir="${build.output}/JunitReport/integration" testdir="${test.home}/integrationtest"-->
+    <!--classpathrefid="test.classpath"/>-->
+    <!--</target>-->
+
+    <target name="package" depends="compile">
+        <mkdir dir="${build.output.war}"/>
+        <mkdir dir="${build.output.war}/WEB-INF"/>
+
+        <copy todir="${build.output.war}/WEB-INF/classes">
+            <fileset dir="${build.output.classes}"/>
+        </copy>
+
+        <copy todir="${build.output.war}/WEB-INF">
+            <fileset dir="${base.dir}/web/WEB-INF"/>
+        </copy>
+
+        <copy todir="${build.output.war}/WEB-INF/lib" flatten="true" includeemptydirs="false">
+            <fileset dir="${lib.dir}" excludes="servlet-api-2.3.jar"/>
+        </copy>
+
+        <war destfile="${artifacts.home}/${app.name}.war">
+            <fileset dir="${build.output.war}"/>
+        </war>
+    </target>
+
+</project>
