@@ -23,16 +23,9 @@ public class RetrieveServlet extends HttpServlet {
     public File getFile(HttpServletRequest request) throws IOException {
         String servletPath = request.getServletPath();
         if (servletPath.contains("/appLogs")) {
-            return getApplicationLogsZipped();
+            return new ZipFilesUtility().extractAppLogs();
         }
         return null;
-    }
-
-    private File getApplicationLogsZipped() throws IOException {
-        File tempFile = File.createTempFile("logs", ".zip", new File("/tmp"));
-        return ZipFilesUtility.extractFile(
-                "/home/praveeg/third-party-lib/apache-tomcat-7.0.8/logs",
-                tempFile);
     }
 
     public void sendFile(HttpServletResponse response, File file) {
@@ -46,7 +39,6 @@ public class RetrieveServlet extends HttpServlet {
             ServletOutputStream op = response.getOutputStream();
             op.write(dataInBytes);
             op.flush();
-
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

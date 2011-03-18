@@ -4,12 +4,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ZipFilesUtility {
+    Properties properties;
 
-    public static File extractFile(String path, File zipFile) throws IOException {
+    public ZipFilesUtility() {
+        this.properties = new Properties();
+        try {
+            properties.load(getClass().getResourceAsStream("/application.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public File extractAppLogs() throws IOException {
+        File zipFile = File.createTempFile("logs", ".zip", new File("/tmp"));
+        String path = this.properties.getProperty("appLogDirectory");
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(zipFile));
         File directory = new File(path);
         File[] files = directory.listFiles();

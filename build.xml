@@ -5,7 +5,7 @@
     <property name="app.name" value="retrieve-artifacts"/>
     <property name="src.dir" value="${basedir}/src"/>
     <property name="src.home" value="${basedir}/src/com/thoughtworks"/>
-    <property name="src.resources" value="${basedir}/src/resources"/>
+    <property name="src.resources" value="${basedir}/web/WEB-INF"/>
     <!--<property name="test.home" value="${basedir}/test/java"/>-->
     <!--<property name="test.resources" value="${basedir}/test/resources"/>-->
     <property name="artifacts.base" value="${basedir}/artifacts"/>
